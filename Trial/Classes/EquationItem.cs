@@ -63,6 +63,8 @@ namespace Trial
                 int plusIndex = input.IndexOf('+');
                 int minusIndex = input.IndexOf('-');
                 int timesIndex = input.IndexOf('*');
+                int cosineIndex = input.IndexOf("cos[");
+                int sinIndex = input.IndexOf("sin[");
 
                 //Resolve addition first
                 if (plusIndex != -1)
@@ -121,7 +123,41 @@ namespace Trial
                     }
                 }
 
-                return EquationItem.GetEmpty();
+                //Resolve Cosine
+                if(cosineIndex != -1)
+                {
+                    string cosParam = input?.Substring(cosineIndex).Split('[', ']')[1];
+
+                    EquationItem equationItem = new EquationItem();
+                    equationItem.IsEmpty = false;
+                    equationItem.Id = level * 10 + lastLevelId;
+                    equationItem.Parent = parent;
+                    equationItem.Level = level;
+                    equationItem.Operation = "cos";
+                    equationItem.LeftNode = NodeItem.ReadString(cosParam);
+                    equationItem.RightNode = NodeItem.ReadString(cosParam);
+                    equationItem.VariableValue = variableValue;
+                    return equationItem;
+                }
+
+                //Resolve Sin
+                if (sinIndex != -1)
+                {
+                    string sinParam = input?.Substring(sinIndex).Split('[', ']')[1];
+
+                    EquationItem equationItem = new EquationItem();
+                    equationItem.IsEmpty = false;
+                    equationItem.Id = level * 10 + lastLevelId;
+                    equationItem.Parent = parent;
+                    equationItem.Level = level;
+                    equationItem.Operation = "sin";
+                    equationItem.LeftNode = NodeItem.ReadString(sinParam);
+                    equationItem.RightNode = NodeItem.ReadString(sinParam);
+                    equationItem.VariableValue = variableValue;
+                    return equationItem;
+                }
+
+                return GetEmpty();
 
             }
             catch (System.Exception)
