@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Trial
 {
@@ -9,7 +7,7 @@ namespace Trial
     {
         public Reader()
         {
-           
+
         }
 
         public static List<EquationItem> ReadEquationString(string input, string variableValue)
@@ -27,7 +25,7 @@ namespace Trial
                 result.Add(root);
 
                 if (root.LeftNode.CanBeEvaluted() && root.RightNode.CanBeEvaluted())
-                {                
+                {
                     return result;
                 }
 
@@ -52,5 +50,5 @@ namespace Trial
         }
     }
 
-   
+
 }

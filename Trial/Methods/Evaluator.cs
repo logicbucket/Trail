@@ -22,25 +22,26 @@ namespace Trial
                 while (levels.Count() != 0)
                 {
                     int currLevel = levels[0];
-                    List<EquationItem> currLevelEquations = equations.Where(x => x.Level == currLevel).ToList();
-                    //Solve curr 1 , add to its parent param value
-                    foreach (var curr in currLevelEquations)
-                    {
-                        string soln = Solve(curr);
-                        int parentId = equations.Where(x => x.Id == curr.Parent).Select(x =>x.Id).SingleOrDefault();
 
-                        bool rightNode = curr.IsFromParentRightNode;
-                        if (rightNode)
+                    List<EquationItem> currentLevelEquationItems = equations.Where(x => x.Level == currLevel).ToList();
+
+                    foreach (var equationItem in currentLevelEquationItems)
+                    {
+                        string solution = Solve(equationItem);
+
+                        int parentId = equations.Where(x => x.Id == equationItem.Parent).Select(x =>x.Id).FirstOrDefault();
+
+                        if (equationItem.IsFromParentRightNode)
                         {
-                            equations.Where(x => x.Id == parentId).Select(x => x).First().RightNode.ParamString = soln;
-                            equations.Where(x => x.Id == parentId).Select(x => x).First().RightNode.ParamValue = soln;
+                            equations.Where(x => x.Id == parentId).Select(x => x).First().RightNode.ParamString = solution;
+                            equations.Where(x => x.Id == parentId).Select(x => x).First().RightNode.ParamValue = solution;
                         }
                         else
                         {
-                            equations.Where(x => x.Id == parentId).Select(x => x).First().LeftNode.ParamString = soln;
-                            equations.Where(x => x.Id == parentId).Select(x => x).First().LeftNode.ParamValue = soln;
+                            equations.Where(x => x.Id == parentId).Select(x => x).First().LeftNode.ParamString = solution;
+                            equations.Where(x => x.Id == parentId).Select(x => x).First().LeftNode.ParamValue = solution;
                         }
-                        result = soln;
+                        result = solution;
                     }
 
                     levels.Remove(currLevel);
@@ -51,17 +52,17 @@ namespace Trial
             return "Can't calcualte this yet!"; //Dummy answer
         }
 
-        private static string Solve(EquationItem equation)
+        private static string Solve(EquationItem equationItem)
         {
-            Func<string, string, decimal> fn = Operator.GetFunction(equation.Operation);
+            Func<string, string, decimal> fn = Operator.GetFunction(equationItem.Operation);
 
-            string left = equation.LeftNode.ParamString == "x"
-                ? equation.VariableValue :
-                  equation.LeftNode.ParamString;
+            string left = equationItem.LeftNode.ParamString == "x"
+                ? equationItem.VariableValue :
+                  equationItem.LeftNode.ParamString;
 
-            string right = equation.RightNode.ParamString == "x"
-                ? equation.VariableValue :
-                  equation.RightNode.ParamString;
+            string right = equationItem.RightNode.ParamString == "x"
+                ? equationItem.VariableValue :
+                  equationItem.RightNode.ParamString;
 
             return fn(left, right).ToString();
         }
