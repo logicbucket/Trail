@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Trial
-{ 
+{
     public class Evaluator
     {
         public static string Evaluate(List<EquationItem> equations)
@@ -21,7 +20,7 @@ namespace Trial
                 string result = "";
 
                 while (levels.Count() != 0)
-                {                    
+                {
                     int currLevel = levels[0];
                     List<EquationItem> currLevelEquations = equations.Where(x => x.Level == currLevel).ToList();
                     //Solve curr 1 , add to its parent param value
@@ -29,7 +28,7 @@ namespace Trial
                     {
                         string soln = Solve(curr);
                         int parentId = equations.Where(x => x.Id == curr.Parent).Select(x =>x.Id).SingleOrDefault();
-                        //problem identfying right 'nodedness'
+
                         bool rightNode = curr.IsFromParentRightNode;
                         if (rightNode)
                         {
@@ -37,18 +36,18 @@ namespace Trial
                             equations.Where(x => x.Id == parentId).Select(x => x).First().RightNode.ParamValue = soln;
                         }
                         else
-                        {                            
+                        {
                             equations.Where(x => x.Id == parentId).Select(x => x).First().LeftNode.ParamString = soln;
                             equations.Where(x => x.Id == parentId).Select(x => x).First().LeftNode.ParamValue = soln;
                         }
                         result = soln;
                     }
 
-                    levels.Remove(currLevel);                    
+                    levels.Remove(currLevel);
                 }
                 return result;
             }
-            
+
             return "Can't calcualte this yet!"; //Dummy answer
         }
 
@@ -68,6 +67,6 @@ namespace Trial
         }
     }
 
-  
+
 
 }
