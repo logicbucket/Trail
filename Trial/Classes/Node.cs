@@ -60,7 +60,8 @@ namespace Trial
 
             node.ParamString = input;
 
-            if (node.IsEvalReady && decimal.TryParse(input, out decimal val))
+            decimal val;
+            if (node.IsEvalReady && decimal.TryParse(input, out val))
             {
                 node.ParamValue = val.ToString();
             }

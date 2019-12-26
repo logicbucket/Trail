@@ -48,12 +48,15 @@ namespace Trial
             ops.Add("*", "Multiply");
             return ops;
         }
-        
-        #region  Functions
 
+        #region  Functions
         public static Func<string, string, decimal> GetFunction(string opSymbol)
         {
-            
+            return OpToFunctionMapper()[opSymbol];
+        }
+
+        public static Func<string, string, decimal> GetFunctionAlternative(string opSymbol)
+        {            
             if( OpToFunctionMapper().TryGetValue(opSymbol, out Func<string, string, decimal> fn))
             {
                 return fn;
@@ -75,8 +78,10 @@ namespace Trial
 
         private static decimal Add(string left, string right)
         {
-            bool leftOk = decimal.TryParse(left, out decimal l);
-            bool rightOk = decimal.TryParse(right, out decimal r);
+            decimal l;
+            decimal r;
+            bool leftOk = decimal.TryParse(left, out l);
+            bool rightOk = decimal.TryParse(right, out r);
 
             if (leftOk & rightOk)
                 return l + r;
@@ -90,8 +95,10 @@ namespace Trial
 
         private static decimal Subtract(string left, string right)
         {
-            bool leftOk = decimal.TryParse(left, out decimal l);
-            bool rightOk = decimal.TryParse(right, out decimal r);
+            decimal l;
+            decimal r;
+            bool leftOk = decimal.TryParse(left, out l);
+            bool rightOk = decimal.TryParse(right, out r);
 
             if (leftOk & rightOk)
                 return l - r;
@@ -105,8 +112,10 @@ namespace Trial
 
         private static decimal Multiply(string left, string right)
         {
-            bool leftOk = decimal.TryParse(left, out decimal l);
-            bool rightOk = decimal.TryParse(right, out decimal r);
+            decimal l;
+            decimal r;
+            bool leftOk = decimal.TryParse(left, out l);
+            bool rightOk = decimal.TryParse(right, out r);
 
             if (leftOk & rightOk)
                 return l * r;
@@ -120,7 +129,8 @@ namespace Trial
 
         private static decimal Sin(string left, string right)
         {
-            bool leftOk = double.TryParse(left, out double val);
+            double val;
+            bool leftOk = double.TryParse(left, out val);
 
             if (leftOk)
                 return Convert.ToDecimal(Math.Sin(val));
@@ -130,7 +140,8 @@ namespace Trial
 
         private static decimal Cosine(string left, string right)
         {
-            bool leftOk = double.TryParse(left, out double val);
+            double val;
+            bool leftOk = double.TryParse(left, out val);
 
             if (leftOk)
                 return Convert.ToDecimal(Math.Cos(val));
