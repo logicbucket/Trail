@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Trial
 {
@@ -9,7 +7,7 @@ namespace Trial
     {
         public Reader()
         {
-           
+
         }
 
         public static List<EquationItem> ReadEquationString(string input, string variableValue)
@@ -18,39 +16,35 @@ namespace Trial
             List<EquationItem> unresolved = new List<EquationItem>();
             bool stop = false;
 
-            if (Operator.ArithmeticOpsOnly(input)) //only work on +, -, * for now
+            EquationItem root = EquationItem.GetRoot(input, variableValue);
+
+            if (root == null) return result;
+
+            result.Add(root);
+
+            if (root.LeftNode.CanBeEvaluted() && root.RightNode.CanBeEvaluted())
             {
-                EquationItem root = EquationItem.GetRoot(input, variableValue);
+                return result;
+            }
 
-                if (root == null) return result;
-
-                result.Add(root);
-
-                if (root.LeftNode.CanBeEvaluted() && root.RightNode.CanBeEvaluted())
-                {                
-                    return result;
-                }
-
-                EquationItem.Resolve(result, unresolved, root, 0);
-                while (stop == false)
+            EquationItem.Resolve(result, unresolved, root, 0);
+            while (stop == false)
+            {
+                EquationItem temp = unresolved
+                                    .Where(x => x.IsReadyForEval() == false)
+                                    .FirstOrDefault();
+                if (temp != null)
                 {
-                    EquationItem temp = unresolved
-                                        .Where(x => x.IsReadyForEval() == false)
-                                        .FirstOrDefault();
-                    if (temp != null)
-                    {
-                        EquationItem.Resolve(result, unresolved, temp, 0);
-                        unresolved.Remove(temp);
-                    }
-
-                    stop = unresolved.Count == 0 || unresolved.All(x => x.IsReadyForEval()); //is 2nd codition needed?
+                    EquationItem.Resolve(result, unresolved, temp, 0);
+                    unresolved.Remove(temp);
                 }
 
+                stop = unresolved.Count == 0 || unresolved.All(x => x.IsReadyForEval()); //is 2nd codition needed?
             }
 
             return result;
         }
     }
 
-   
+
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Trial
 {
@@ -38,8 +34,8 @@ namespace Trial
 
         public bool IsReadyForEval()
         {
-            
-            if ((LeftNode != null && LeftNode.IsEvalReady) && 
+
+            if ((LeftNode != null && LeftNode.IsEvalReady) &&
                 (RightNode !=null && RightNode.IsEvalReady))
                 return true;
             return false;
@@ -61,133 +57,177 @@ namespace Trial
 
         public static EquationItem GetItem(string input, string variableValue, int parent, int level, int lastLevelId)
         {
-            //Find First + sign
-            int plusIndex = input.IndexOf('+');
-            int minusIndex = input.IndexOf('-');
-            int timesIndex = input.IndexOf('*');
-
-            //Resolve addition first
-            if (plusIndex != -1)
+            try
             {
-                string[] arr = input.Split(new char[] { '+' }, 2);
-                if (arr.Length == 2)
+                //Find First + sign
+                int plusIndex = input.IndexOf('+');
+                int minusIndex = input.IndexOf('-');
+                int timesIndex = input.IndexOf('*');
+                int cosineIndex = input.IndexOf("cos[");
+                int sinIndex = input.IndexOf("sin[");
+
+                //Resolve addition first
+                if (plusIndex != -1)
                 {
+                    string[] arr = input.Split(new char[] { '+' }, 2);
+                    if (arr.Length == 2)
+                    {
+                        EquationItem equationItem = new EquationItem();
+                        equationItem.IsEmpty = false;
+                        equationItem.Id = level * 10 + lastLevelId;
+                        equationItem.Parent = parent;
+                        equationItem.Level = level;
+                        equationItem.Operation = "+";
+                        equationItem.LeftNode = NodeItem.ReadString(arr[0]);
+                        equationItem.RightNode = NodeItem.ReadString(arr[1]);
+                        equationItem.VariableValue = variableValue;
+                        return equationItem;
+                    }
+                }
+
+                //Resolve subtraction
+                if (minusIndex != -1)
+                {
+                    string[] arr = input.Split(new char[] { '-' }, 2);
+                    if (arr.Length == 2)
+                    {
+                        EquationItem equationItem = new EquationItem();
+                        equationItem.IsEmpty = false;
+                        equationItem.Id = level * 10 + lastLevelId;
+                        equationItem.Parent = parent;
+                        equationItem.Level = level;
+                        equationItem.Operation = "-";
+                        equationItem.LeftNode = NodeItem.ReadString(arr[0]);
+                        equationItem.RightNode = NodeItem.ReadString(arr[1]);
+                        equationItem.VariableValue = variableValue;
+                        return equationItem;
+                    }
+                }
+
+                //Resolve multiplication
+                if (timesIndex != -1)
+                {
+                    string[] arr = input.Split(new char[] { '*' }, 2);
+                    if (arr.Length == 2)
+                    {
+                        EquationItem equationItem = new EquationItem();
+                        equationItem.IsEmpty = false;
+                        equationItem.Id = level * 10 + lastLevelId;
+                        equationItem.Parent = parent;
+                        equationItem.Level = level;
+                        equationItem.Operation = "*";
+                        equationItem.LeftNode = NodeItem.ReadString(arr[0]);
+                        equationItem.RightNode = NodeItem.ReadString(arr[1]);
+                        equationItem.VariableValue = variableValue;
+                        return equationItem;
+                    }
+                }
+
+                //Resolve Cosine
+                if(cosineIndex != -1)
+                {
+                    string cosParam = input?.Substring(cosineIndex).Split('[', ']')[1];
+
                     EquationItem equationItem = new EquationItem();
                     equationItem.IsEmpty = false;
                     equationItem.Id = level * 10 + lastLevelId;
                     equationItem.Parent = parent;
                     equationItem.Level = level;
-                    equationItem.Operation = "+";
-                    equationItem.LeftNode = NodeItem.ReadString(arr[0]);
-                    equationItem.RightNode = NodeItem.ReadString(arr[1]);
+                    equationItem.Operation = "cos";
+                    equationItem.LeftNode = NodeItem.ReadString(cosParam);
+                    equationItem.RightNode = NodeItem.ReadString(cosParam);
                     equationItem.VariableValue = variableValue;
                     return equationItem;
                 }
-            }
 
-            //Resolve subtraction
-            if (minusIndex != -1)
-            {
-                string[] arr = input.Split(new char[] { '-' }, 2);
-                if (arr.Length == 2)
+                //Resolve Sin
+                if (sinIndex != -1)
                 {
+                    string sinParam = input?.Substring(sinIndex).Split('[', ']')[1];
+
                     EquationItem equationItem = new EquationItem();
                     equationItem.IsEmpty = false;
                     equationItem.Id = level * 10 + lastLevelId;
                     equationItem.Parent = parent;
                     equationItem.Level = level;
-                    equationItem.Operation = "-";
-                    equationItem.LeftNode = NodeItem.ReadString(arr[0]);
-                    equationItem.RightNode = NodeItem.ReadString(arr[1]);
+                    equationItem.Operation = "sin";
+                    equationItem.LeftNode = NodeItem.ReadString(sinParam);
+                    equationItem.RightNode = NodeItem.ReadString(sinParam);
                     equationItem.VariableValue = variableValue;
                     return equationItem;
                 }
-            }
 
-            //Resolve multiplication
-            if (timesIndex != -1)
+                return GetEmpty();
+
+            }
+            catch (System.Exception)
             {
-                string[] arr = input.Split(new char[] { '*' }, 2);
-                if (arr.Length == 2)
-                {
-                    EquationItem equationItem = new EquationItem();
-                    equationItem.IsEmpty = false;
-                    equationItem.Id = level * 10 + lastLevelId;
-                    equationItem.Parent = parent;
-                    equationItem.Level = level;
-                    equationItem.Operation = "*";
-                    equationItem.LeftNode = NodeItem.ReadString(arr[0]);
-                    equationItem.RightNode = NodeItem.ReadString(arr[1]);
-                    equationItem.VariableValue = variableValue;
-                    return equationItem;
-                }
-            }
 
-            return EquationItem.GetEmpty();
+                throw;
+            }
         }
 
         public static void Resolve(List<EquationItem> accumlator, List<EquationItem> unresolved, EquationItem equationItem, int lastLevelId)
         {
-           // List<EquationItem> result = new List<EquationItem>();
-
-            if (equationItem.LeftNode.IsEvalReady == false ||
-                equationItem.RightNode.IsEvalReady == false)
+            if (equationItem.LeftNode != null && equationItem.RightNode != null)
             {
-                if (equationItem.LeftNode.CanBeEvaluted() == false)
+                if (equationItem.LeftNode.IsEvalReady == false ||
+                    equationItem.RightNode.IsEvalReady == false)
                 {
-                    int leftId =  lastLevelId + 1;
-                    lastLevelId = leftId;
-
-                    EquationItem leftEquationItem = GetItem(equationItem.LeftNode.ParamString,
-                        equationItem.VariableValue,
-                        equationItem.Id,
-                        equationItem.Level + 1,
-                       leftId);
-                    leftEquationItem.IsFromParentRightNode = false;
-
-                    if (leftEquationItem.IsReadyForEval())
+                    if (equationItem.LeftNode.CanBeEvaluted() == false)
                     {
-                        accumlator.Add(leftEquationItem);
+                        int leftId = lastLevelId + 1;
+                        lastLevelId = leftId;
+
+                        EquationItem leftEquationItem = GetItem(equationItem.LeftNode.ParamString,
+                            equationItem.VariableValue,
+                            equationItem.Id,
+                            equationItem.Level + 1,
+                           leftId);
+                        leftEquationItem.IsFromParentRightNode = false;
+
+                        if (leftEquationItem.IsReadyForEval())
+                        {
+                            accumlator.Add(leftEquationItem);
+                        }
+                        else
+                        {
+                            unresolved.Add(leftEquationItem);
+                        }
                     }
-                    else
+                    else if(equationItem.Level != 0 ) //If not root, add to accumulator
                     {
-                        unresolved.Add(leftEquationItem);
+                        accumlator.Add(equationItem);
                     }
-                }
-                else
-                {
-                    accumlator.Add(equationItem);
-                }
 
-                if (equationItem.RightNode.CanBeEvaluted() == false)
-                {
-                    int rightId = lastLevelId + 1;
-                    lastLevelId = rightId;
-
-                    EquationItem rightEquationItem = GetItem(equationItem.RightNode.ParamString,
-                        equationItem.VariableValue,
-                        equationItem.Id,
-                        equationItem.Level + 1,
-                       rightId);
-
-                    rightEquationItem.IsFromParentRightNode = true;
-
-                    if (rightEquationItem.IsReadyForEval())
+                    if (equationItem.RightNode.CanBeEvaluted() == false)
                     {
-                        accumlator.Add(rightEquationItem);
+                        int rightId = lastLevelId + 1;
+                        lastLevelId = rightId;
+
+                        EquationItem rightEquationItem = GetItem(equationItem.RightNode.ParamString,
+                            equationItem.VariableValue,
+                            equationItem.Id,
+                            equationItem.Level + 1,
+                           rightId);
+
+                        rightEquationItem.IsFromParentRightNode = true;
+
+                        if (rightEquationItem.IsReadyForEval())
+                        {
+                            accumlator.Add(rightEquationItem);
+                        }
+                        else
+                        {
+                            unresolved.Add(rightEquationItem);
+                        }
                     }
-                    else
+                    else if (equationItem.Level != 0) //If not root, add to accumulator
                     {
-                        unresolved.Add(rightEquationItem);
+                        accumlator.Add(equationItem);
                     }
-                }
-                else
-                {
-                    accumlator.Add(equationItem);
                 }
             }
-
-            //return result;
         }
     }
 }
