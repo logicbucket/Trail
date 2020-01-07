@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
 namespace Trial
 {
-    public partial class Form1 : Form 
+    public partial class Form1 : Form
     {
-       
+
         public Form1()
         {
             InitializeComponent();
@@ -46,16 +40,6 @@ namespace Trial
             DisplayBox.AppendText (SubButton.Text);
         }
 
-        private void LeftParenthesisButton_Click(object sender, EventArgs e)
-        {
-            DisplayBox.AppendText(LeftParenthesisButton.Text);
-        }
-
-        private void RightParenthesisButton_Click(object sender, EventArgs e)
-        {
-            DisplayBox.AppendText(RightParenthesisButton.Text);
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             DisplayBox.AppendText(XButton.Text);
@@ -66,25 +50,26 @@ namespace Trial
             try {
                 DisplayBox.Text = DisplayBox.Text.Substring(0, DisplayBox.Text.Length - 1);
             }
-            catch 
+            catch
             {
-                
+
             }
         }
 
         public void Function(Double X)
         {
-             
+
         }
 
         private void EnterButton_Click(object sender, EventArgs e)
         {
            string input = string.IsNullOrEmpty( DisplayBox.Text) ? "" : DisplayBox.Text;
 
-            label2.Text = ""; //reset display on Clicking 'Enter' 
 
-            //Step 1 ---------------------------------------------------            
-            string error = Validator.Validate(input); 
+            label2.Text = ""; //reset display on Clicking 'Enter'
+
+            //Step 1 ---------------------------------------------------
+            string error = Validator.Validate(input);
             if(!string.IsNullOrEmpty(error))
             {
                 label2.Text = error;
@@ -96,10 +81,10 @@ namespace Trial
 
             //Step 2  ---------------------------------------------------
             // Get the x value from User Interface, set to 2 for now
-            List<EquationItem> equations = Reader.ReadEquationString(readyText, "2"); 
+            List<EquationItem> equations = Reader.ReadEquationString(readyText, "2");
 
 
-            //Step 3  ---/Show in UI-------------------------------------           
+            //Step 3  ---/Show in UI-------------------------------------
             label2.Text = Evaluator.Evaluate(equations);
         }
     }
