@@ -1,45 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Trial
 {
     public class Validator
     {
-        public static string Validate(string input)
+        public static string ValidateEquation(string equationText)
         {
-            List<string> errors = new List<string>();
             StringBuilder sb = new StringBuilder();
 
-            if (string.IsNullOrEmpty(input))
+            if (string.IsNullOrEmpty(equationText))
             {
-                sb.AppendLine("Error: Empty Input.");
+                sb.AppendLine("Error : Equation is Empty");
                 return sb.ToString();
             }
 
-            if(input.Length > 40)
+            if(equationText.Length > 40)
             {
-                sb.AppendLine("Error: Equation Length exceded.");
+                sb.AppendLine("Error : Equation Length exceded.");
             }
 
-            if (HasInValidCharacters(input))
+            if (HasInValidCharacters(equationText))
             {
-                sb.AppendLine("Error: Input has Invalid Characters.");
+                sb.AppendLine("Error : Input has Invalid Characters.");
             }
 
-            List<string> symbolErrors = InvalidSymbol(input);
+            List<string> symbolErrors = InvalidSymbol(equationText);
             if (symbolErrors.Count > 0)
             {
-                sb.AppendLine($"Error: Contains Invalid Symbol combination : {symbolErrors[0]}");
+                sb.AppendLine($"Error : Contains Invalid Symbol Combinations : {symbolErrors[0]}");
             }
 
             return sb.ToString();
         }
+        public static string ValidateVariableValue(string variableValue)
+        {
+            if (string.IsNullOrEmpty(variableValue))
+            {
+                return "Error : Value of x is required";
+            }
+
+            decimal numValue;
+            if (!decimal.TryParse(variableValue, out numValue))
+            {
+               return "Error : The value of x is not a number";
+            }
+
+            return string.Empty;
+        }
 
         public static bool HasInValidCharacters(string input)
         {
-            /* The ^ will anchor the beginning of the string, the $ will anchor the end of the string, 
+            /* The ^ will anchor the beginning of the string, the $ will anchor the end of the string,
              * and the + will match one or more of what precedes it(a number in this case).*/
 
             //Regex regex = new Regex("^[-0123456789\\]\\[()*+xcosin^]+$");
@@ -56,7 +68,7 @@ namespace Trial
             {
                 "(+", "+)", "(*", "*)", "^)","sin[]","cos[]"
             };
-            
+
             input = input.ToLower();
 
             foreach (var invalidCombo in invalidSymbolCombinations)

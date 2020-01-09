@@ -56,28 +56,38 @@ namespace Trial
 
         private void EnterButton_Click(object sender, EventArgs e)
         {
-           string input = string.IsNullOrEmpty( DisplayBox.Text) ? "" : DisplayBox.Text;
+           string equationText = string.IsNullOrEmpty( DisplayBox.Text) ? "" : DisplayBox.Text;
            string variableValue = string.IsNullOrEmpty(txtVariableValue.Text) ? "" : txtVariableValue.Text;
 
-            label2.Text = ""; //reset display on Clicking 'Enter'
+            label2.Text = ""; // Clear Answer display when Clicking 'Enter'
 
-            //Step 1 ---------------------------------------------------
-            string error = Validator.Validate(input);
-            if(!string.IsNullOrEmpty(error))
+            /*Step 1 --------------------------------------------------------------
+            / alidate Input Values */
+            string equationError = Validator.ValidateEquation(equationText);
+            string variableValueError = Validator.ValidateVariableValue(variableValue);
+
+            if (!string.IsNullOrEmpty(equationError))
             {
-                label2.Text = error;
+                label2.Text = equationError;
                 return;
             }
 
-            string readyText = input.ToLower().Replace(" ", "");
+            if (!string.IsNullOrEmpty(variableValueError))
+            {
+                label2.Text = variableValueError;
+                return;
+            }
+
+            string readyText = equationText.ToLower().Replace(" ", "");
             InsertedFunLabel.Text = readyText;
 
-            //Step 2  ---------------------------------------------------
-            // Get the x value from User Interface, set to 2 for now
+            /* Step 2  ------------------------------------------------------------
+               Get the x value from User Interface, set to 2 for now */
             List<EquationItem> equations = Reader.ReadEquationString(readyText, variableValue);
 
 
-            //Step 3  ---/Show in UI-------------------------------------
+            /* Step 3  ------------------------------------------------------------
+               Show Result in UI */
             label2.Text = Evaluator.Evaluate(equations);
         }
     }
